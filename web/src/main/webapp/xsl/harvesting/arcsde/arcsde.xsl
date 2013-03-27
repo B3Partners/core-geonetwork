@@ -58,6 +58,20 @@
 			</tr>
 
 			<tr>
+				<td class="padded"><xsl:value-of select="/root/gui/harvesting/connectiontype"/></td>
+				<td class="padded">
+					<div>
+						<input id="arcsde.radio-jdbc" name="arcsde.connectiontype" class="content" type="radio" value="jdbc" checked="checked"/>
+						<label for="arcsde.radio-jdbc">JDBC</label>
+					</div>
+					<div>
+						<input id="arcsde.radio-arcsde" name="arcsde.connectiontype" class="content" type="radio" value="arcsde"/>
+						<label for="arcsde.radio-arcsde">ARCSDE</label>						
+					</div>
+				</td>
+			</tr>
+			
+			<tr>
 				<td class="padded" valign="bottom"><xsl:value-of select="/root/gui/harvesting/icon"/></td>
 				<td class="padded">
 					<select id="arcsde.icon" class="content" name="icon" size="1"/>

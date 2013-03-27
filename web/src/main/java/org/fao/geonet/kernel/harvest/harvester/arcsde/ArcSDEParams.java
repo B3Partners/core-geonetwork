@@ -55,9 +55,13 @@ public class ArcSDEParams extends AbstractParams {
 	 * Name of the ArcSDE database.
 	 */
 	public String database;
-	
+    /**
+     * Whether to connect using JDBC or using ArcSDE API.
+     */
+    public String connectionType;
+
 	public String icon;
-	
+
 	public ArcSDEParams(DataManager dm) {
 		super(dm);
 	}
@@ -76,8 +80,10 @@ public class ArcSDEParams extends AbstractParams {
 		username = Util.getParam(site, "username", "");
 		password = Util.getParam(site, "password", "");
 		database = Util.getParam(site, "database", "");
+        connectionType = Util.getParam(site, "connectiontype", "jdbc");
 		icon = Util.getParam(site, "icon", "arcsde.gif");
-		System.out.println("arcsdeparams create: " + server + ":" + port + " " + username + " " + password + " " + database);
+		System.out.println("arcsdeparams create: using " + connectionType + " " + server + ":" + port + " " + username + " " + password + " " + database);
+
 	}
 
 	//---------------------------------------------------------------------------
@@ -94,8 +100,10 @@ public class ArcSDEParams extends AbstractParams {
 		username = Util.getParam(site, "username", "");
 		password = Util.getParam(site, "password", "");
 		database = Util.getParam(site, "database", "");
+        connectionType = Util.getParam(site, "connectiontype", "jdbc");
 		icon = Util.getParam(site, "icon", "arcsde.gif");
-		System.out.println("arcsdeparams update: " + server + ":" + port + " " + username + " " + password + " " + database);
+		System.out.println("arcsdeparams update: " + connectionType + " " + server + ":" + port + " " + username + " " + password + " " + database);
+
 	}
 	
 	//---------------------------------------------------------------------------
@@ -112,7 +120,8 @@ public class ArcSDEParams extends AbstractParams {
 		copy.port = port;
 		copy.username = username;
 		copy.password = password;
-		copy.database = database;
-		return copy;		
+        copy.database = database;
+        copy.connectionType = connectionType;
+		return copy;
 	}
 }
