@@ -25,7 +25,6 @@ package org.fao.geonet.kernel.harvest.harvester.arcsde;
 import jeeves.exceptions.BadInputEx;
 import jeeves.interfaces.Logger;
 import jeeves.resources.dbms.Dbms;
-import jeeves.server.UserSession;
 import jeeves.server.context.ServiceContext;
 import jeeves.server.resources.ResourceManager;
 import jeeves.utils.Xml;
@@ -46,15 +45,25 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import org.fao.geonet.exceptions.NoSchemaMatchesException;
+import org.jdom.Namespace;
 
-//import com.esri.sde.sdk.GeoToolsDummyAPI;
 /**
- * 
- * Harvester from ArcSDE. Requires the propietary ESRI libraries containing their API. Since those are not
- * committed to our svn, you'll need to replace the dummy library arcsde-dummy.jar with the real ones for this
- * to work.
- * 
+ *
+ * Harvester from ArcSDE.
+ *
+ * Can be used in ARCSDE mode, in which case the ArcSDE Java API is used. When you use that mode you can use either the
+ * classic ArcSDE mode or the "Direct Connect" mode. ARCSDE mod requires the propietary ESRI libraries containing their
+ * API. Those are not committed to our svn, so you'll need to replace the dummy library arcsde-dummy.jar with the real
+ * ones for this to work. For Direct Connect you also need some ESRI DLLs and an Oracle client on your machine. See
+ * http://webhelp.esri.com/arcgisdesktop/9.2/index.cfm?TopicName=Setting_up_clients_for_a_direct_connection for
+ * information on that.
+ *
+ * Can also be used in JDBC mode, in which case simply a direct JDBC connection to your ArcSDE database is opened. For
+ * this you must include your JDBC driver for the database used by ArcSDE (for example the Oracle driver).
+ *
  * @author heikki doeleman
+ * @author Matthijs Laan
  *
  */
 public class ArcSDEHarvester extends AbstractHarvester {
@@ -63,15 +72,18 @@ public class ArcSDEHarvester extends AbstractHarvester {
 	private ArcSDEResult result;
 	
 	private static final String ARC_TO_ISO19115_TRANSFORMER = "ArcCatalog8_to_ISO19115.xsl";
-	private static final String ISO19115_TO_ISO19139_TRANSFORMER = "ISO19115-to-ISO19139.xsl";
+    private static final String ISO19115_TO_ISO19139_TRANSFORMER = "ISO19115-to-ISO19139.xsl";
 	private static String ARC_TO_ISO19115_TRANSFORMER_LOCATION;
-	private static String ISO19115_TO_ISO19139_TRANSFORMER_LOCATION;
-	
+    private static String ISO19115_TO_ISO19139_TRANSFORMER_LOCATION;
+
 	public static void init(ServiceContext context) throws Exception {
 		ARC_TO_ISO19115_TRANSFORMER_LOCATION = context.getAppPath() + Geonet.Path.STYLESHEETS + "/conversion/import/" + ARC_TO_ISO19115_TRANSFORMER;
 		ISO19115_TO_ISO19139_TRANSFORMER_LOCATION = context.getAppPath() + Geonet.Path.STYLESHEETS + "/conversion/import/" + ISO19115_TO_ISO19139_TRANSFORMER;
 	}
 
+    /**
+     * Saves an ArcSDE harvester's properties.
+     */
 	@Override
 	protected void storeNodeExtra(Dbms dbms, AbstractParams params, String path, String siteId, String optionsId) throws SQLException {
 		ArcSDEParams as = (ArcSDEParams) params;
@@ -80,9 +92,13 @@ public class ArcSDEHarvester extends AbstractHarvester {
 		settingMan.add(dbms, "id:"+siteId, "port", as.port);
 		settingMan.add(dbms, "id:"+siteId, "username", as.username);
 		settingMan.add(dbms, "id:"+siteId, "password", as.password);
-		settingMan.add(dbms, "id:"+siteId, "database", as.database);
+        settingMan.add(dbms, "id:"+siteId, "database", as.database);
+        settingMan.add(dbms, "id:"+siteId, "connectionType", as.connectionType);
 	}
-	
+
+    /**
+     * Saves a new ArcSDE harvester.
+     */
 	@Override
 	protected String doAdd(Dbms dbms, Element node) throws BadInputEx, SQLException {
 	/*	try {
@@ -115,6 +131,9 @@ public class ArcSDEHarvester extends AbstractHarvester {
 	//	}
 	}
 
+    /**
+     * Saves information about the results of the last harvesting run.
+     */
 	@Override
 	protected void doAddInfo(Element node) {
 		//--- if the harvesting is not started yet, we don't have any info
@@ -148,6 +167,9 @@ public class ArcSDEHarvester extends AbstractHarvester {
 		return res;
 	}
 
+    /**
+     * Removes an ArcSDE harvester.
+     */
 	@Override
 	protected void doDestroy(Dbms dbms) throws SQLException {
 		File icon = new File(Resources.locateLogosDir(context), params.uuid +".gif");
@@ -155,15 +177,29 @@ public class ArcSDEHarvester extends AbstractHarvester {
 		Lib.sources.delete(dbms, params.uuid);
 	}
 
-	@Override
-	protected void doHarvest(Logger l, ResourceManager rm) throws Exception {
-		System.out.println("ArcSDE harvest starting");
-		ArcSDEMetadataAdapter adapter = new ArcSDEMetadataAdapter(params.server, params.port, params.database, params.username, params.password);
-		List<String> metadataList = adapter.retrieveMetadata();
-		align(metadataList, rm);
-		System.out.println("ArcSDE harvest finished");
+    /**
+     * Executes a harvesting run.
+     */
+    @Override
+	protected void doHarvest(Logger logger, ResourceManager rm) throws ArcSDEHarvesterException {
+        try {
+            ArcSDEConnectionType connectionType = ArcSDEConnectionType.valueOf(params.connectionType);
+            logger.info("ArcSDE harvest starting using connection type: " + connectionType.name());
+            ArcSDEMetadataAdapter adapter = new ArcSDEMetadataAdapter(connectionType, params.server, params.port, params.database, params.username, params.password);
+            List<String> metadataList = adapter.retrieveMetadata();
+            align(metadataList, rm);
+            logger.info("ArcSDE harvest finished");
+        }
+        catch(Throwable x) {
+           String message = x.getMessage();
+           // If message is null, check getCause() (useful for ExceptionInInitializerError launched in ArcSDEConnection)
+           if ((message == null) && (x.getCause() != null)) message = x.getCause().getMessage();
+           logger.error(message);
+
+           throw new ArcSDEHarvesterException("ArcSDEHarvester raised exception in doHarvest: " + message, x);
+        }
 	}
-	
+
 	private void align(List<String> metadataList, ResourceManager rm) throws Exception {
 		System.out.println("Start of alignment for : "+ params.name);
 		ArcSDEResult result = new ArcSDEResult();
@@ -181,12 +217,29 @@ public class ArcSDEHarvester extends AbstractHarvester {
 			result.total++;
 			// create JDOM element from String-XML
 			Element metadataElement = Xml.loadString(metadata, false);
-			// transform ESRI output to ISO19115
-			Element iso19115 = Xml.transform(metadataElement, ARC_TO_ISO19115_TRANSFORMER_LOCATION);
-			// transform ISO19115 to ISO19139
-			Element iso19139 = Xml.transform(iso19115, ISO19115_TO_ISO19139_TRANSFORMER_LOCATION);
-			
-			String schema = dataMan.autodetectSchema(iso19139);
+            
+            // If it exists, unwrap a MD_Metadata element if contained within a
+            // <metadata> ESRI document 
+            
+            Element iso19139;
+            if("MD_Metadata".equals(metadataElement.getName()) && "http://www.isotc211.org/2005/gmd".equals(metadataElement.getNamespaceURI())) {
+                iso19139 = metadataElement;
+            } else {
+                iso19139 = metadataElement.getChild("MD_Metadata", Namespace.getNamespace("http://www.isotc211.org/2005/gmd"));
+                
+                if(iso19139 == null) {
+                    // transform ESRI output to ISO19115
+                    Element iso19115 = Xml.transform(metadataElement, ARC_TO_ISO19115_TRANSFORMER_LOCATION);
+                    // transform ISO19115 to ISO19139
+                    iso19139 = Xml.transform(iso19115, ISO19115_TO_ISO19139_TRANSFORMER_LOCATION);
+                }
+            }
+            
+            String schema = null;
+            try {
+                schema = dataMan.autodetectSchema(iso19139);
+            } catch(NoSchemaMatchesException nsm) {
+            }
 			if(schema == null) {
 				result.unknownSchema++;
 			}
