@@ -2772,6 +2772,30 @@
 						<br/>(OGC-WMS Server: <xsl:value-of select="$linkage"/> )
 					</xsl:with-param>
 				</xsl:apply-templates>
+				<!-- Create a link for a WMS service that will open the Utrecht Webkaart map viewer -->
+                <xsl:variable name="test-part">
+                    <!-- Add 'test' to the url if running in test environment to use the test viewer -->
+                    <xsl:if test="contains(/root/gui/env/server/host, 'test')">test</xsl:if>
+                </xsl:variable>
+                <xsl:variable name="baseviewerurl">http://webkaart<xsl:value-of select="$test-part"/>.provincie-utrecht.nl/index.do</xsl:variable>
+                <xsl:variable name="viewerurl" select="concat($baseviewerurl, '?wmsurl=', encode-for-uri($linkage), '&amp;layers=', encode-for-uri($name))"/>
+                
+				<xsl:apply-templates mode="simpleElement" select=".">
+					<xsl:with-param name="schema"  select="$schema"/>
+					<xsl:with-param name="title"  select="concat('Toon in webkaart', $test-part)"/>
+					<xsl:with-param name="text">
+						<a href="{$viewerurl}" target="_blank">
+							<xsl:choose>
+								<xsl:when test="string($description)!=''">
+									<xsl:value-of select="$description"/>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:value-of select="$name"/>
+								</xsl:otherwise>
+							</xsl:choose>
+						</a>
+					</xsl:with-param>
+				</xsl:apply-templates>                
 				<!-- Create a link for a WMS service that will open in Google Earth through the reflector -->
 				<xsl:apply-templates mode="simpleElement" select=".">
 					<xsl:with-param name="schema"  select="$schema"/>
