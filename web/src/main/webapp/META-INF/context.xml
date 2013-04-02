@@ -1,2 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context antiJARLocking="true" path="/geonetwork"/>
+<Context antiJARLocking="true" path="/geonetwork">
+    <!-- Tomcat resource link -->
+    <ResourceLink global="jdbc/geonetwork" name="jdbc/geonetwork" type="javax.sql.Datasource"/>    
+</Context>
