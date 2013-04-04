@@ -120,26 +120,32 @@ function resetSimpleSearch()
 
 
 function resetMinimaps() {
-	GeoNetwork.minimapSimpleSearch.clearExtentBox();
-    var minimap =  GeoNetwork.minimapSimpleSearch.getMap();
-    if (minimap) {
-        var pnl = Ext.getCmp('mini_mappanel_ol_minimap1');
-        pnl.map.setCenter(pnl.center, pnl.zoom);
-    }	
+    if(GeoNetwork.minimapSimpleSearch) {
+        GeoNetwork.minimapSimpleSearch.clearExtentBox();
+        var minimap =  GeoNetwork.minimapSimpleSearch.getMap();
+        if (minimap) {
+            var pnl = Ext.getCmp('mini_mappanel_ol_minimap1');
+            pnl.map.setCenter(pnl.center, pnl.zoom);
+        }	
+    }
 	
-	GeoNetwork.minimapAdvancedSearch.clearExtentBox();
-    minimap =  GeoNetwork.minimapAdvancedSearch.getMap();
-    if (minimap) {
-        var pnl = Ext.getCmp('mini_mappanel_ol_minimap2');
-        pnl.map.setCenter(pnl.center, pnl.zoom);
-    }	
+    if(GeoNetwork.minimapAdvancedSearch) {
+        GeoNetwork.minimapAdvancedSearch.clearExtentBox();
+        minimap =  GeoNetwork.minimapAdvancedSearch.getMap();
+        if (minimap) {
+            var pnl = Ext.getCmp('mini_mappanel_ol_minimap2');
+            pnl.map.setCenter(pnl.center, pnl.zoom);
+        }	
+    }
 
-	GeoNetwork.minimapRemoteSearch.clearExtentBox();
-    minimap =  GeoNetwork.minimapRemoteSearch.getMap();
-    if (minimap) {
-        var pnl = Ext.getCmp('mini_mappanel_ol_minimap3');
-        pnl.map.setCenter(pnl.center, pnl.zoom);
-    }	
+    if(GeoNetwork.minimapRemoteSearch) {
+        GeoNetwork.minimapRemoteSearch.clearExtentBox();
+        minimap =  GeoNetwork.minimapRemoteSearch.getMap();
+        if (minimap) {
+            var pnl = Ext.getCmp('mini_mappanel_ol_minimap3');
+            pnl.map.setCenter(pnl.center, pnl.zoom);
+        }	
+    }
 }
 
 

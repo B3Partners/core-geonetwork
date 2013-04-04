@@ -412,15 +412,15 @@
                 // Initialize minimaps
                 GeoNetwork.minimapSimpleSearch.init("ol_minimap1", "region_simple", backgroundLayersMapSearch, mapOptions1, simpleAoiIds);
                 GeoNetwork.minimapAdvancedSearch.init("ol_minimap2", "region", backgroundLayersMapSearch, mapOptions2, advancedAoiIds);
-                GeoNetwork.minimapRemoteSearch.init("ol_minimap3", "region_remote", backgroundLayersMapSearch, mapOptions3, remoteAoiIds);
+                //GeoNetwork.minimapRemoteSearch.init("ol_minimap3", "region_remote", backgroundLayersMapSearch, mapOptions3, remoteAoiIds);
 
 
                 GeoNetwork.minimapSimpleSearch.setSynchMinimap(GeoNetwork.minimapAdvancedSearch);
                 GeoNetwork.minimapSimpleSearch.setSynchMinimap(GeoNetwork.minimapRemoteSearch);
                 GeoNetwork.minimapAdvancedSearch.setSynchMinimap(GeoNetwork.minimapSimpleSearch);
                 GeoNetwork.minimapAdvancedSearch.setSynchMinimap(GeoNetwork.minimapRemoteSearch);
-                GeoNetwork.minimapRemoteSearch.setSynchMinimap(GeoNetwork.minimapSimpleSearch);
-                GeoNetwork.minimapRemoteSearch.setSynchMinimap(GeoNetwork.minimapAdvancedSearch);
+                //GeoNetwork.minimapRemoteSearch.setSynchMinimap(GeoNetwork.minimapSimpleSearch);
+                //GeoNetwork.minimapRemoteSearch.setSynchMinimap(GeoNetwork.minimapAdvancedSearch);
                 GeoNetwork.CatalogueInterface.init(GeoNetwork.mapViewer.getMap());
                 GeoNetwork.MapStateManager.applyMapState(GeoNetwork.mapViewer.getMap());
             }
