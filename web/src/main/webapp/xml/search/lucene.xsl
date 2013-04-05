@@ -112,6 +112,18 @@ compiles a request
 			</BooleanClause>
 		</xsl:if>
 
+		<!-- organisation name -->
+		<xsl:call-template name="textField">
+			<xsl:with-param name="expr" select="/request/orgName"/>
+			<xsl:with-param name="field" select="'orgName'"/>
+		</xsl:call-template>
+		
+		<!-- individual name -->
+		<xsl:call-template name="textField">
+			<xsl:with-param name="expr" select="/request/indName"/>
+			<xsl:with-param name="field" select="'indName'"/>
+		</xsl:call-template>
+                
 		<!-- digital and paper maps -->
 		
 		<!-- if both are off or both are on then no clauses are added -->

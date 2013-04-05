@@ -551,6 +551,27 @@
 		<!-- MCP fields -->
 		<xsl:call-template name="adv_mcp"/>
 	
+		<!-- Contact search -->
+		<div class="row">
+			<a onclick="showFields('contactsearch.img','contactsearch.fields')" style="cursor:pointer;cursor:hand;">
+				<img id="contactsearch.img" src="{/root/gui/url}/images/plus.gif" alt="" />
+				<xsl:text> </xsl:text>	
+				<xsl:value-of select="/root/gui/strings/searchContact/label"/>
+			</a>
+
+            <div id="contactsearch.fields" style="display: none">
+                <div class="row">
+                    <span class="labelField"><xsl:value-of select="/root/gui/strings/searchContact/orgName"/></span>
+                    <input name="orgName" id="orgName" class="content" size="31" value=""/>
+                </div>
+
+                <div class="row">
+                    <span class="labelField"><xsl:value-of select="/root/gui/strings/searchContact/indName"/></span>
+                    <input name="indName" id="indName" class="content" size="31" value=""/>
+                </div>
+            </div>
+        </div>
+        
 		<!-- Map type -->
 		<div class="row">  <!-- div row-->
 			<a onclick="showFields('maptype.img','maptype.table')" style="cursor:pointer;cursor:hand;">

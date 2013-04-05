@@ -1189,6 +1189,11 @@
 		<keywords>Pick keywords from existing metadata records</keywords>
 		<thesaurus>Pick keywords from thesauri</thesaurus>
 	</searchhelp>
+    <searchContact>
+        <label>Contactgegevens</label> 
+        <orgName>Naam van de organisatie</orgName>
+        <indName>Contactpersoon</indName>
+    </searchContact>
 
     <inspire>
           <serviceType>
