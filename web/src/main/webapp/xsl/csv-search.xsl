@@ -64,11 +64,28 @@
 		Create the sorted set based on the search response. Use the brief mode or the csv mode if 
 		available.
 		-->
-		<xsl:variable name="sortedResults">
+		<xsl:variable name="sortedResultsXML">
 			<xsl:for-each select="/root/csw:GetRecordsResponse/csw:SearchResults/*|
 						/root/response/*[name(.)!='summary']">
 				<xsl:sort select="geonet:info/schema" order="descending"/>
-				
+				<xsl:copy-of select="."/>
+            </xsl:for-each>
+        </xsl:variable>
+
+		<xsl:variable name="maxContacts">
+			<xsl:call-template name="maxContacts">
+				<xsl:with-param name="metadata" select="exslt:node-set($sortedResultsXML)/*[1]"/>
+			</xsl:call-template>
+		</xsl:variable>
+
+		<xsl:variable name="maxResources">
+			<xsl:call-template name="maxResources">
+				<xsl:with-param name="metadata" select="exslt:node-set($sortedResultsXML)/*[1]"/>
+			</xsl:call-template>
+		</xsl:variable>        
+                
+        <xsl:variable name="sortedResults">
+            <xsl:for-each select="exslt:node-set($sortedResultsXML)/*">
 				<!-- Try to apply csv mode template to current metadata record -->
 				<xsl:variable name="mdcsv">
 					<xsl:apply-templates mode="csv" select=".">
@@ -133,6 +150,66 @@
 		</xsl:for-each>
 		
 	</xsl:template>
+    
+	<xsl:template name="maxContacts" xmlns:gmd="http://www.isotc211.org/2005/gmd">
+		<xsl:param name="metadata"/>
+		<xsl:param name="currentMax" select="-1"/>
+		
+		<xsl:variable name="thisMax" select="count($metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact)"/>
+		<xsl:variable name="newMax">
+			<xsl:choose>
+				<xsl:when test="number($thisMax) &gt; number($currentMax)">
+					<xsl:value-of select="number($thisMax)"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="number($currentMax)"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		
+		<xsl:variable name="followingMetadata" select="$metadata/following-sibling::gmd:MD_Metadata"/>
+		<xsl:choose>
+			<xsl:when test="count($followingMetadata) &gt; 0">
+				<xsl:call-template name="maxContacts">
+					<xsl:with-param name="metadata" select="$followingMetadata[1]"/>
+					<xsl:with-param name="currentMax" select="number($newMax)"/>
+				</xsl:call-template>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="$newMax"/>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
+	
+	<xsl:template name="maxResources" xmlns:gmd="http://www.isotc211.org/2005/gmd">
+		<xsl:param name="metadata"/>
+		<xsl:param name="currentMax" select="-1"/>
+		
+		<xsl:variable name="thisMax" select="count($metadata/gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine)"/>
+		<xsl:variable name="newMax">
+			<xsl:choose>
+				<xsl:when test="number($thisMax) &gt; number($currentMax)">
+					<xsl:value-of select="number($thisMax)"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="number($currentMax)"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		
+		<xsl:variable name="followingMetadata" select="$metadata/following-sibling::gmd:MD_Metadata"/>
+		<xsl:choose>
+			<xsl:when test="count($followingMetadata) &gt; 0">
+				<xsl:call-template name="maxResources">
+					<xsl:with-param name="metadata" select="$followingMetadata[1]"/>
+					<xsl:with-param name="currentMax" select="number($newMax)"/>
+				</xsl:call-template>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="number($newMax)"/>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>    
 	
 	<!-- Dump line -->
 	<xsl:template name="csvLine">

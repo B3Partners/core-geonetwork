@@ -4392,5 +4392,182 @@
 	<xsl:template mode="addXMLFragment" match="*|@*"/>
 
 	<xsl:template name="iso19139-javascript"/>
+    
+	<xsl:template match="gmd:MD_Metadata" mode="csv">
+		<xsl:param name="internalSep"/>
+		<xsl:param name="maxContacts" select="1"/>
+		<xsl:param name="maxResources" select="1"/>
+		
+		<metadata>
+			<xsl:copy-of select="geonet:info"/>
+			
+			<Titel>
+				<xsl:value-of select="gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:title"/>
+			</Titel>
+			
+			<Versie>
+				<xsl:value-of select="gmd:metadataStandardVersion"/>
+			</Versie>
+			
+			<Datum_laatste_wijziging>
+				<xsl:value-of select="gmd:dateStamp"/>
+			</Datum_laatste_wijziging>
+			
+			<Herzieningsfrequentie>
+				<xsl:value-of select="gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceMaintenance/gmd:MD_MaintenanceInformation/gmd:maintenanceAndUpdateFrequency/gmd:MD_MaintenanceFrequencyCode/@codeListValue"/>
+			</Herzieningsfrequentie>
+			
+			<Code_referentiesysteem>
+				<xsl:variable name="codeSpace" select="gmd:referenceSystemInfo/gmd:MD_ReferenceSystem/gmd:referenceSystemIdentifier/gmd:RS_Identifier/gmd:codeSpace"/>
+				<xsl:variable name="code" select="gmd:referenceSystemInfo/gmd:MD_ReferenceSystem/gmd:referenceSystemIdentifier/gmd:RS_Identifier/gmd:code"/>
+				<xsl:value-of select="concat(normalize-space($codeSpace), ' ', normalize-space($code))"/>
+			</Code_referentiesysteem>
+			
+			<Temporele_dekking_van_datum>
+				<xsl:value-of select="gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:temporalElement/gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod/gml:begin"/>
+			</Temporele_dekking_van_datum>
+			
+			<Temporele_dekking_tot_datum>
+				<xsl:value-of select="gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:temporalElement/gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod/gml:end"/>
+			</Temporele_dekking_tot_datum>
+			
+			<Distributeur>
+				<xsl:value-of select="gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorContact/gmd:CI_ResponsibleParty/gmd:organisationName"/>
+			</Distributeur>
+			
+			<xsl:for-each select="gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact">
+				<xsl:call-template name="csvElement">
+					<xsl:with-param name="elementName">Verantwoordelijke_Organisatie_Bron</xsl:with-param>
+					<xsl:with-param name="originalValue" select="gmd:CI_ResponsibleParty/gmd:organisationName"/>
+				</xsl:call-template>
+				<xsl:call-template name="csvElement">
+					<xsl:with-param name="elementName">Verantwoordelijk_Contactpersoon_Bron</xsl:with-param>
+					<xsl:with-param name="originalValue" select="gmd:CI_ResponsibleParty/gmd:individualName"/>
+				</xsl:call-template>
+				<xsl:call-template name="csvElement">
+					<xsl:with-param name="elementName">Rol_Verantwoordelijk_Contactpersoon_Bron</xsl:with-param>
+					<xsl:with-param name="originalValue" select="gmd:CI_ResponsibleParty/gmd:role/gmd:CI_RoleCode/@codeListValue"/>
+				</xsl:call-template>
+				<xsl:call-template name="csvElement">
+					<xsl:with-param name="elementName">Positie_Verantwoordelijk_Contactpersoon_Bron</xsl:with-param>
+					<xsl:with-param name="originalValue" select="gmd:CI_ResponsibleParty/gmd:positionName"/>
+				</xsl:call-template>
+			</xsl:for-each>
+			<xsl:call-template name="emptyContact">
+				<xsl:with-param name="index" select="count(gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact) + 1"/>
+				<xsl:with-param name="endIndex" select="$maxContacts"/>
+			</xsl:call-template>
+
+			<xsl:for-each select="gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine">
+				<xsl:call-template name="csvElement">
+					<xsl:with-param name="elementName">Online_resource_URL</xsl:with-param>
+					<xsl:with-param name="originalValue" select="gmd:CI_OnlineResource/gmd:linkage"/>
+				</xsl:call-template>
+				<xsl:call-template name="csvElement">
+					<xsl:with-param name="elementName">Online_resource_Protocol</xsl:with-param>
+					<xsl:with-param name="originalValue" select="gmd:CI_OnlineResource/gmd:protocol"/>
+				</xsl:call-template>
+				<xsl:call-template name="csvElement">
+					<xsl:with-param name="elementName">Online_resource_Naam</xsl:with-param>
+					<xsl:with-param name="originalValue" select="gmd:CI_OnlineResource/gmd:name"/>
+				</xsl:call-template>
+			</xsl:for-each>
+			<xsl:call-template name="emptyResource">
+				<xsl:with-param name="index" select="count(gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine) + 1"/>
+				<xsl:with-param name="endIndex" select="$maxResources"/>
+			</xsl:call-template>
+
+			<Samenvatting>
+				<xsl:value-of select="gmd:identificationInfo/gmd:MD_DataIdentification/gmd:abstract"/>
+			</Samenvatting>
+
+			<Sleutelwoorden>
+				<xsl:copy-of select="gmd:identificationInfo/gmd:MD_DataIdentification/gmd:descriptiveKeywords/gmd:MD_Keywords/gmd:keyword"/>
+			</Sleutelwoorden>
+							
+			<Gebruiksbeperkingen>
+				<xsl:copy-of select="gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_Constraints/gmd:useLimitation"/>
+			</Gebruiksbeperkingen>
+
+			<Inhoudelijk_verantwoordelijk>
+				<xsl:for-each select="gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty">													
+					<xsl:variable name="positionName" select="translate(gmd:positionName,'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')" />
+						<xsl:if test="normalize-space($positionName)='inhoudelijk verantwoordelijk'">
+						<xsl:value-of select="gmd:organisationName" />					
+					</xsl:if>
+				</xsl:for-each>
+			</Inhoudelijk_verantwoordelijk>
+
+			<Valide>
+				<xsl:value-of select="geonet:info/valid"/>
+			</Valide>
+		</metadata>
+	</xsl:template>        
+	
+	<xsl:template name="emptyContact">
+		<xsl:param name="index"/>
+		<xsl:param name="endIndex"/>
+		<xsl:if test="$index &lt; ($endIndex + 1)">
+			<xsl:value-of select="$index"/>
+			<xsl:call-template name="csvElement">
+				<xsl:with-param name="elementName">Verantwoordelijke_Organisatie_Bron</xsl:with-param>
+				<xsl:with-param name="usePosition" select="$index"/>
+			</xsl:call-template>
+			<xsl:call-template name="csvElement">
+				<xsl:with-param name="elementName">Verantwoordelijk_Contactpersoon_Bron</xsl:with-param>
+				<xsl:with-param name="usePosition" select="$index"/>
+			</xsl:call-template>
+			<xsl:call-template name="csvElement">
+				<xsl:with-param name="elementName">Rol_Verantwoordelijk_Contactpersoon_Bron</xsl:with-param>
+				<xsl:with-param name="usePosition" select="$index"/>
+			</xsl:call-template>
+			<xsl:call-template name="csvElement">
+				<xsl:with-param name="elementName">Positie_Verantwoordelijk_Contactpersoon_Bron</xsl:with-param>
+				<xsl:with-param name="usePosition" select="$index"/>
+			</xsl:call-template>
+			<xsl:call-template name="emptyContact">
+				<xsl:with-param name="index" select="$index + 1"/>
+				<xsl:with-param name="endIndex" select="$endIndex"/>
+			</xsl:call-template>
+		</xsl:if>
+	</xsl:template>
+	
+	<xsl:template name="emptyResource">
+		<xsl:param name="index"/>
+		<xsl:param name="endIndex"/>
+		<xsl:if test="$index &lt; ($endIndex + 1)">
+			<xsl:call-template name="csvElement">
+				<xsl:with-param name="elementName">Online_resource_URL</xsl:with-param>
+				<xsl:with-param name="usePosition" select="$index"/>
+			</xsl:call-template>
+			<xsl:call-template name="csvElement">
+				<xsl:with-param name="elementName">Online_resource_Protocol</xsl:with-param>
+				<xsl:with-param name="usePosition" select="$index"/>
+			</xsl:call-template>
+			<xsl:call-template name="csvElement">
+				<xsl:with-param name="elementName">Online_resource_Naam</xsl:with-param>
+				<xsl:with-param name="usePosition" select="$index"/>
+			</xsl:call-template>
+			<xsl:call-template name="emptyResource">
+				<xsl:with-param name="index" select="$index + 1"/>
+				<xsl:with-param name="endIndex" select="$endIndex"/>
+			</xsl:call-template>
+		</xsl:if>
+	</xsl:template>
+	
+	<xsl:template name="csvElement">
+		<xsl:param name="elementName"/>
+		<xsl:param name="originalValue"/>
+		<xsl:param name="usePosition" select="position()"/>
+		<xsl:variable name="elementNameComposed">
+			<xsl:choose>
+				<xsl:when test="$usePosition &gt; -1"><xsl:value-of select="concat($elementName, string($usePosition))"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="$elementName"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<xsl:element name="{$elementNameComposed}">
+			<xsl:value-of select="$originalValue"/>
+		</xsl:element>
+	</xsl:template>
 
 </xsl:stylesheet>
