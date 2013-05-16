@@ -42,7 +42,7 @@
 						</xsl:choose>
 						|
 					</xsl:if>
-					<xsl:choose>
+					<!--xsl:choose>
 						<xsl:when test="/root/gui/reqService='feedback'">
 							<font class="banner-active"><xsl:value-of select="/root/gui/strings/contactUs"/></font>
 						</xsl:when>
@@ -50,7 +50,7 @@
 							<a class="banner" onclick="doBannerButton('{/root/gui/locService}/feedback','{/root/gui/strings/contactUs}','{$modal}',600)" href="javascript:void(0);"><xsl:value-of select="/root/gui/strings/contactUs"/></a>
 						</xsl:otherwise>
 					</xsl:choose>
-					|
+					|-->
 					<xsl:choose>
 						<xsl:when test="/root/gui/reqService='links'">
 							<font class="banner-active"><xsl:value-of select="/root/gui/strings/links"/></font>
@@ -82,7 +82,7 @@
 					</xsl:choose>
 					|
 					<!-- Help section to be displayed according to GUI language -->
-					<xsl:choose>
+					<!--xsl:choose>
 						<xsl:when test="/root/gui/language='fr'">
 							<a class="banner" href="{/root/gui/url}/docs/fra/users" target="_blank"><xsl:value-of select="/root/gui/strings/help"/></a>
 						</xsl:when>
@@ -90,7 +90,7 @@
 							<a class="banner" href="{/root/gui/url}/docs/eng/users" target="_blank"><xsl:value-of select="/root/gui/strings/help"/></a>
 						</xsl:otherwise>
 					</xsl:choose>
-					|
+					|-->
 				</td>
 				<td align="right" class="banner-menu" width="590px">
 					<xsl:if test="count(/root/gui/config/languages/*) &gt; 1">
