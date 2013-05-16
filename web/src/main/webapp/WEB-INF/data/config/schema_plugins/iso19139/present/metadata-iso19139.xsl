@@ -4435,6 +4435,26 @@
 				<xsl:value-of select="gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorContact/gmd:CI_ResponsibleParty/gmd:organisationName"/>
 			</Distributeur>
 			
+            <Inhoudelijk_verantwoordelijk>
+				<xsl:for-each select="gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty">													
+					<xsl:variable name="positionName" select="translate(gmd:positionName,'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')" />
+						<xsl:if test="normalize-space($positionName)='inhoudelijk verantwoordelijk'">
+						<xsl:value-of select="gmd:organisationName" />					
+					</xsl:if>
+				</xsl:for-each>
+			</Inhoudelijk_verantwoordelijk>
+            
+			<Valide>
+				<xsl:value-of select="geonet:info/valid"/>
+			</Valide>
+            
+            <Aantal_Contacts>
+                <xsl:value-of select="count(gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact)"/>
+            </Aantal_Contacts>
+            <Aantal_Resources>
+                <xsl:value-of select="count(gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine)"/>
+            </Aantal_Resources>
+                        
 			<xsl:for-each select="gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact">
 				<xsl:call-template name="csvElement">
 					<xsl:with-param name="elementName">Verantwoordelijke_Organisatie_Bron</xsl:with-param>
@@ -4489,18 +4509,6 @@
 				<xsl:copy-of select="gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_Constraints/gmd:useLimitation"/>
 			</Gebruiksbeperkingen>
 
-			<Inhoudelijk_verantwoordelijk>
-				<xsl:for-each select="gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty">													
-					<xsl:variable name="positionName" select="translate(gmd:positionName,'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')" />
-						<xsl:if test="normalize-space($positionName)='inhoudelijk verantwoordelijk'">
-						<xsl:value-of select="gmd:organisationName" />					
-					</xsl:if>
-				</xsl:for-each>
-			</Inhoudelijk_verantwoordelijk>
-
-			<Valide>
-				<xsl:value-of select="geonet:info/valid"/>
-			</Valide>
 		</metadata>
 	</xsl:template>        
 	
