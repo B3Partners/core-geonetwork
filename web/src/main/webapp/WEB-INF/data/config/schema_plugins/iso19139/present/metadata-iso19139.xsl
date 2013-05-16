@@ -3917,7 +3917,7 @@
 										<img class="thumbnail" src="{gmd:MD_BrowseGraphic/gmd:fileName/gco:CharacterString}"/>
 									</a>
 									<br/>
-									<span class="thumbnail"><xsl:value-of select="$imageTitle"/></span>
+									<!--span class="thumbnail"><xsl:value-of select="$imageTitle"/></span-->
 								</div>
 							</xsl:when>
 							<xsl:otherwise>
