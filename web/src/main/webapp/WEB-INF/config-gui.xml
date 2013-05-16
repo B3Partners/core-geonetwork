@@ -85,7 +85,6 @@
   <mapViewer options="{projection: 'EPSG:28992', units: 'm', maxExtent: new OpenLayers.Bounds(12000,304000,280000,620000), restrictedExtent: null, resolutions: [3440.64,1720.32,860.16,430.08,215.04,107.52,53.76,26.88,13.44,6.72,3.36,1.68,0.84,0.42,0.21,0.105,0.0525]}">
   <layers>
     <layer server="http://geoservices.provincie-utrecht.nl/arcgis/services/c01-3-3_admin/MapServer/WMSServer" tocName="Provinciegrenzen" params="{layers: '1', format: 'image/png', transparent: 'true'}" options="{isBaseLayer: false}" />
-    <layer server="http://geoservices.provincie-utrecht.nl/arcgis/services/c01-3-3_lufo/MapServer/WMSServer" tocName="Luchtfoto 2006" params="{layers: '4', format: 'image/jpeg'}" options="{isBaseLayer: true}" />
     <layer server="http://geoservices.provincie-utrecht.nl/arcgis/services/c01-3-3_admin/MapServer/WMSServer" tocName="Gemeentegrenzen" params="{layers: '0', format: 'image/png', transparent: 'true'}" options="{isBaseLayer: true}" />
   </layers>
   <scales values="[500, 250, 100, 50, 10, 5, 1]" />
