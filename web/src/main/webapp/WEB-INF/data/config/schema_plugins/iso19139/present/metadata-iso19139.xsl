@@ -4418,9 +4418,12 @@
 			</Herzieningsfrequentie>
 			
 			<Code_referentiesysteem>
-				<xsl:variable name="codeSpace" select="gmd:referenceSystemInfo/gmd:MD_ReferenceSystem/gmd:referenceSystemIdentifier/gmd:RS_Identifier/gmd:codeSpace"/>
-				<xsl:variable name="code" select="gmd:referenceSystemInfo/gmd:MD_ReferenceSystem/gmd:referenceSystemIdentifier/gmd:RS_Identifier/gmd:code"/>
-				<xsl:value-of select="concat(normalize-space($codeSpace), ' ', normalize-space($code))"/>
+                <xsl:for-each select="gmd:referenceSystemInfo/gmd:MD_ReferenceSystem/gmd:referenceSystemIdentifier/gmd:RS_Identifier">
+                    <xsl:if test="position() != 1">
+                        <xsl:text>,</xsl:text>
+                    </xsl:if>
+                    <xsl:value-of select="concat(normalize-space(gmd:codeSpace), ':', normalize-space(gmd:code))"/>
+                </xsl:for-each>
 			</Code_referentiesysteem>
 			
 			<Temporele_dekking_van_datum>
