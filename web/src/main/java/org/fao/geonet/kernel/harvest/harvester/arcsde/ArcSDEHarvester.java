@@ -204,6 +204,14 @@ public class ArcSDEHarvester extends AbstractHarvester {
 		System.out.println("Start of alignment for : "+ params.name);
 		ArcSDEResult result = new ArcSDEResult();
 		Dbms dbms = (Dbms) rm.open(Geonet.Res.MAIN_DB);
+        
+		boolean transformIt = false;
+		String thisXslt = context.getAppPath() + Geonet.Path.IMPORT_STYLESHEETS + "/";
+		if (!params.importXslt.equals("none")) {
+			thisXslt = thisXslt + params.importXslt;
+			transformIt = true;
+		}
+        
 		//----------------------------------------------------------------
 		//--- retrieve all local categories and groups
 		//--- retrieve harvested uuids for given harvesting node
@@ -260,6 +268,17 @@ public class ArcSDEHarvester extends AbstractHarvester {
                             continue;
                         }
                     }
+                    
+                    // transform using importxslt if not none
+                    if (transformIt) {
+                        try {
+                            iso19139 = Xml.transform(iso19139, thisXslt);
+                        } catch (Exception e) {
+                            System.out.println("Cannot transform XML from SDE, ignoring. Error was: "+e.getMessage());
+                            result.badFormat++;
+                            continue; // skip this one
+                        }
+                    }                    
 
 					//
 					// add / update the metadata from this harvesting result
