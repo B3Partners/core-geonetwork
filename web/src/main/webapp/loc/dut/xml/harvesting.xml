@@ -121,7 +121,18 @@
 	<useAccount>Gebruikersaccount</useAccount>
 	<username>Gebruikersnaam</username>
 	<password>Wachtwoord</password>
-	
+    <connectiontype>Soort verbinding</connectiontype>
+    <jdbcOptions>JDBC instellingen</jdbcOptions>    
+    <jdbcDriver>JDBC driver</jdbcDriver>
+    <schemaVersion>SDE schema versie</schemaVersion>
+    <customQuery>Eigen SQL query</customQuery>
+    <customQueryValue>Gebruik eigen query</customQueryValue>
+    <customQueryHelp>SQL query voor het ophalen van metadata in plaats van de standaard
+        queries voor de SDE schema versie. De standaard queries zijn: 'select xml 
+        from gdb_usermetadata' (SDE 9.x) en 'select documentation from 
+        gdb_items' (SDE 10.x). Pas deze queries aan voor zover nodig.
+    </customQueryHelp>    
+    	
 	<createRemoteCategory>Set categories if exist locally</createRemoteCategory>
 	<mefFormatFull>Use full MEF format</mefFormatFull>
 	
@@ -143,27 +154,27 @@
 	<retrieve>Ophalen</retrieve>
 	<warn>U kunt enkel gegevens ophalen na het invullen van de site gegevens.</warn>
 	
-	<content>Harvested Content</content>
-	<importxslt>Apply this XSLT to harvested records</importxslt>
+	<content>Geharveste inhoud</content>
+	<importxslt>Pas dit XSLT toe op geharveste records</importxslt>
 
-    <at>Run at</at>
-    <atSpec>( hour of day : minute eg. 23:15 )</atSpec>
-    <interval>Will run again every</interval>
+    <at>Uitvoeren op</at>
+    <atSpec>(uur : minuut, bijvoorbeeld 23:15 )</atSpec>
+    <interval>Herhalen</interval>
     <hourintervals>
-        <hour label="Each hour">1</hour>
-        <hour label="3 hours">3</hour>
-        <hour label="6 hours">6</hour>
-        <hour label="12 hours">12</hour>
-        <hour label="N/A">undefined</hour>
+        <hour label="Elk uur">1</hour>
+        <hour label="Elke 3 uur">3</hour>
+        <hour label="Elke 6 uur">6</hour>
+        <hour label="Elke 12 uur">12</hour>
+        <hour label="Nvt">undefined</hour>
     </hourintervals>
     <dayofweek>
-        <day label="Monday">MON</day>
-        <day label="Tuesday">TUE</day>
-        <day label="Wednesday">WED</day>
-        <day label="Thursday">THU</day>
-        <day label="Friday">FRI</day>
-        <day label="Saturday">SAT</day>
-        <day label="Sunday">SUN</day>
+        <day label="Maandag">MON</day>
+        <day label="Dinsdag">TUE</day>
+        <day label="Woensdag">WED</day>
+        <day label="Donderdag">THU</day>
+        <day label="Vrijdag">FRI</day>
+        <day label="Zaterdag">SAT</day>
+        <day label="Zondag">SUN</day>
     </dayofweek>
     <hours>
         <hour label="0">0</hour>
@@ -211,7 +222,7 @@
 	<source>Bron</source>
 	<criteria>Criteria</criteria>
 	<validate>Valideren</validate>
-	<recurse>Teruggaan</recurse>
+	<recurse>Recursief</recurse>
 	<nodelete>Bewaar lokaal indien verwijderd bij de bronhouder</nodelete>
 	<server>Server</server>	
 	<database>Databank</database>	

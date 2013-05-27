@@ -59,6 +59,21 @@ public class ArcSDEParams extends AbstractParams {
      * Whether to connect using JDBC or using ArcSDE API.
      */
     public String connectionType;
+    /**
+     * Driver to use for JDBC.
+     */
+    public String jdbcDriver;
+    /**
+     * For JDBC, which SDE schema (9.x or 10.x), to determine which table to
+     * look at for metadata. Value "custom" to use custom query.
+     */
+    public String schemaVersion;
+    /**
+     * If the standard query for the SDE schema is not suitable use this SQL
+     * query to retrieve metadata. The first column in the resultset should 
+     * return the metadata in varchar, clob or blob format.
+     */
+    public String customQuery;
 
 	public String icon;
 
@@ -82,8 +97,9 @@ public class ArcSDEParams extends AbstractParams {
 		database = Util.getParam(site, "database", "");
         connectionType = Util.getParam(site, "connectiontype", "jdbc");
 		icon = Util.getParam(site, "icon", "arcsde.gif");
-		System.out.println("arcsdeparams create: using " + connectionType + " " + server + ":" + port + " " + username + " " + password + " " + database);
-
+        jdbcDriver = Util.getParam(site, "jdbcDriver", "oracle.jdbc.OracleDriver");
+        schemaVersion = Util.getParam(site, "schemaVersion", "9.x");
+        customQuery = Util.getParam(site, "customQuery", "");
 	}
 
 	//---------------------------------------------------------------------------
@@ -102,8 +118,9 @@ public class ArcSDEParams extends AbstractParams {
 		database = Util.getParam(site, "database", "");
         connectionType = Util.getParam(site, "connectiontype", "jdbc");
 		icon = Util.getParam(site, "icon", "arcsde.gif");
-		System.out.println("arcsdeparams update: " + connectionType + " " + server + ":" + port + " " + username + " " + password + " " + database);
-
+        jdbcDriver = Util.getParam(site, "jdbcDriver", "oracle.jdbc.OracleDriver");
+        schemaVersion = Util.getParam(site, "schemaVersion", "9.x");
+        customQuery = Util.getParam(site, "customQuery", "");
 	}
 	
 	//---------------------------------------------------------------------------
@@ -122,6 +139,9 @@ public class ArcSDEParams extends AbstractParams {
 		copy.password = password;
         copy.database = database;
         copy.connectionType = connectionType;
+        copy.jdbcDriver = jdbcDriver;
+        copy.schemaVersion = schemaVersion;
+        copy.customQuery = customQuery;
 		return copy;
 	}
 }

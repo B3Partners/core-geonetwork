@@ -121,6 +121,17 @@
 	<useAccount>Use account</useAccount>
 	<username>Username</username>
 	<password>Password</password>
+    <connectiontype>Connection type</connectiontype>
+    <jdbcOptions>JDBC options</jdbcOptions>
+    <jdbcDriver>JDBC driver</jdbcDriver>
+    <schemaVersion>SDE schema version</schemaVersion>
+    <customQuery>Custom SQL query</customQuery>
+    <customQueryValue>Use custom query</customQueryValue>
+    <customQueryHelp>SQL query for retrieving metadata instead of the standard 
+        query for the SDE schema version. The standard queries are: 'select xml 
+        from gdb_usermetadata' (SDE 9.x) and 'select documentation from 
+        gdb_items' (SDE 10.x). Customize these as needed.
+    </customQueryHelp>
 	
   <createRemoteCategory>Set categories if exist locally</createRemoteCategory>
   <mefFormatFull>Use full MEF format</mefFormatFull>

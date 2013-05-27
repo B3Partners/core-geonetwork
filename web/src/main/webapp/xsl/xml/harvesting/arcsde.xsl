@@ -17,6 +17,9 @@
                 <password><xsl:value-of select="password/value" /></password>
                 <database><xsl:value-of select="database/value" /></database>
                 <icon><xsl:value-of select="icon/value" /></icon>
+                <jdbcDriver><xsl:value-of select="jdbcDriver/value" /></jdbcDriver>
+                <schemaVersion><xsl:value-of select="schemaVersion/value" /></schemaVersion>
+                <customQuery><xsl:value-of select="customQuery/value" /></customQuery>
 	</xsl:template>
 
 	<!-- ============================================================================================= -->

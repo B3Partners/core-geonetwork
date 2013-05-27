@@ -47,15 +47,17 @@ import org.fao.geonet.kernel.harvest.harvester.arcsde.ArcSDEConnectionType;
  */
 public class ArcSDEMetadataAdapter extends ArcSDEConnection {
 
-	public ArcSDEMetadataAdapter(ArcSDEConnectionType connectionType, String server, int instance, String database, String username, String password) {
-		super(connectionType, server, instance, database, username, password);
+    protected String schemaVersion, customQuery;
+    
+	public ArcSDEMetadataAdapter(ArcSDEConnectionType connectionType, String server, int instance, String database, String username, String password, String jdbcDriver, String schemaVersion, String customQuery) {
+		super(connectionType, server, instance, database, username, password, jdbcDriver);
+        this.schemaVersion = schemaVersion;
+        this.customQuery = customQuery;
 	}
 	
 	private static final String METADATA_TABLE = "SDE.GDB_USERMETADATA";
 	private static final String METADATA_COLUMN = "SDE.GDB_USERMETADATA.XML";
-    private static final String METADATA_COLUMN_SHORT = "XML";
 	private static final String ISO_METADATA_IDENTIFIER = "MD_Metadata";
-    private static final String SQL_QUERY = "SELECT " + METADATA_COLUMN + " FROM " + METADATA_TABLE ;
 	
     /**
      * Retrieves all metadata records found in the ArcSDE database.
@@ -78,23 +80,35 @@ public class ArcSDEMetadataAdapter extends ArcSDEConnection {
 
     private List<String> retrieveMetadataJDBC() throws Exception {
         List<String> results = new ArrayList<String>();
-        PreparedStatement statement = jdbcConnection.prepareStatement(SQL_QUERY);
+        
+        String query;
+        if("9.x".equals(schemaVersion)) {
+            query = "select xml from gdb_usermetadata";
+        } else if("10.x".equals(schemaVersion)) {
+            query = "select documentation from gdb_items";
+        } else if("custom".equals(schemaVersion)) {
+            query = customQuery;
+        } else {
+            throw new IllegalArgumentException("Invalid schemaVersion parameter: " + schemaVersion);
+        }
+                
+        PreparedStatement statement = jdbcConnection.prepareStatement(query);
         ResultSet resultSet = statement.executeQuery();
         while(resultSet.next()){
             String document = "";
-            int colId = resultSet.findColumn(METADATA_COLUMN_SHORT);
             // very simple type check:
-            if (resultSet.getMetaData().getColumnType(colId) == Types.BLOB) {
-                Blob blob = resultSet.getBlob(METADATA_COLUMN_SHORT);
+            if (resultSet.getMetaData().getColumnType(1) == Types.BLOB) {
+                Blob blob = resultSet.getBlob(1);
                 byte[] bdata = blob.getBytes(1, (int) blob.length());
                 document = new String(bdata);
 
-            } else if (resultSet.getMetaData().getColumnType(colId) == Types.LONGVARBINARY) {            
-                byte[] bdata = resultSet.getBytes(colId);
+            } else if (resultSet.getMetaData().getColumnType(1) == Types.LONGVARBINARY) {            
+                byte[] bdata = resultSet.getBytes(1);
                 document = new String(bdata);
-
+            } else if (resultSet.getMetaData().getColumnType(1) == Types.CLOB) {
+                document = resultSet.getString(1);
             } else {
-                throw new Exception("Trying to harvest from a column with an invalid datatype: " + resultSet.getMetaData().getColumnTypeName(colId));
+                throw new Exception("Trying to harvest from a column with an invalid datatype: " + resultSet.getMetaData().getColumnTypeName(1));
                 /*Reader reader = resultSet.getCharacterStream(colId);
                 BufferedReader bufReader = new BufferedReader(reader);
 

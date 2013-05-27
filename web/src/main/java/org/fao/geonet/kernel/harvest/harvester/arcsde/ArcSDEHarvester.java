@@ -94,6 +94,9 @@ public class ArcSDEHarvester extends AbstractHarvester {
 		settingMan.add(dbms, "id:"+siteId, "password", as.password);
         settingMan.add(dbms, "id:"+siteId, "database", as.database);
         settingMan.add(dbms, "id:"+siteId, "connectionType", as.connectionType);
+        settingMan.add(dbms, "id:"+siteId, "jdbcDriver", as.jdbcDriver);
+        settingMan.add(dbms, "id:"+siteId, "schemaVersion", as.schemaVersion);
+        settingMan.add(dbms, "id:"+siteId, "customQuery", as.customQuery);
 	}
 
     /**
@@ -185,12 +188,16 @@ public class ArcSDEHarvester extends AbstractHarvester {
         try {
             ArcSDEConnectionType connectionType = ArcSDEConnectionType.valueOf(params.connectionType);
             logger.info("ArcSDE harvest starting using connection type: " + connectionType.name());
-            ArcSDEMetadataAdapter adapter = new ArcSDEMetadataAdapter(connectionType, params.server, params.port, params.database, params.username, params.password);
+            if(connectionType == ArcSDEConnectionType.jdbc) {
+                logger.info(String.format("ArcSDE harvest JDBC driver=%s, schema=%s, customQuery=%s", params.jdbcDriver, params.schemaVersion, params.customQuery));
+            }
+            ArcSDEMetadataAdapter adapter = new ArcSDEMetadataAdapter(connectionType, params.server, params.port, params.database, params.username, params.password, params.jdbcDriver, params.schemaVersion, params.customQuery);
             List<String> metadataList = adapter.retrieveMetadata();
             align(metadataList, rm);
             logger.info("ArcSDE harvest finished");
         }
         catch(Throwable x) {
+            x.printStackTrace();
            String message = x.getMessage();
            // If message is null, check getCause() (useful for ExceptionInInitializerError launched in ArcSDEConnection)
            if ((message == null) && (x.getCause() != null)) message = x.getCause().getMessage();
@@ -222,6 +229,9 @@ public class ArcSDEHarvester extends AbstractHarvester {
 		//-----------------------------------------------------------------------
 		//--- insert/update metadata		
 		for(String metadata : metadataList) {
+            if(metadata == null || metadata.trim().length() == 0) {
+                continue;
+            }
 			result.total++;
 			// create JDOM element from String-XML
 			Element metadataElement = Xml.loadString(metadata, false);

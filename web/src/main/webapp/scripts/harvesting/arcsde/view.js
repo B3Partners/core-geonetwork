@@ -88,6 +88,9 @@ function setData(node)
         hvutil.setOption(node, 'username', 'arcsde.username');
         hvutil.setOption(node, 'password', 'arcsde.password');
         hvutil.setOption(node, 'database', 'arcsde.database');
+        hvutil.setOption(node, 'jdbcDriver', 'arcsde.jdbcDriver');
+        hvutil.setOption(node, 'schemaVersion', 'arcsde.schemaVersion');
+        hvutil.setOption(node, 'customQuery', 'arcsde.customQuery');
 
 	//--- add privileges entries
 	
@@ -115,7 +118,10 @@ function getData()
 	data.USERNAME = $F('arcsde.username');
 	data.PASSWORD = $F('arcsde.password');
 	data.DATABASE =$F('arcsde.database');
-
+    data.JDBC_DRIVER = $F('arcsde.jdbcDriver');
+    data.SCHEMA_VERSION = $F('arcsde.schemaVersion');
+    data.CUSTOM_QUERY = $F('arcsde.customQuery');
+    
 	data.ICON = $F('arcsde.icon');
 	
 	//--- retrieve privileges and categories information

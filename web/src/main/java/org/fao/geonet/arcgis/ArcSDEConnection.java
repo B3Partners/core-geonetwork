@@ -61,19 +61,27 @@ public class ArcSDEConnection {
 	 * @param username
 	 * @param password
 	 */
-	public ArcSDEConnection(ArcSDEConnectionType connectionType, String server, int instance, String database, String username, String password) {
+	public ArcSDEConnection(ArcSDEConnectionType connectionType, String server, int port, String database, String username, String password, String jdbcDriver) {
         this.connectionType = connectionType;
         switch(connectionType) {
             case jdbc:
                 try {
-                    // TODO make JDBC driver configurable
                     // Load the JDBC driver
-                    String driverName = "oracle.jdbc.driver.OracleDriver";
-                    Class.forName(driverName).newInstance();
+                    Class.forName(jdbcDriver).newInstance();
+                    
                     // Create a connection to the database
-                    String connData = "jdbc:oracle:thin:@" + server + ":" + instance + ":" + database;
-
-                    jdbcConnection = DriverManager.getConnection(connData, username, password);
+                    String url;
+                    if(jdbcDriver.contains("oracle")) {
+                        url = "jdbc:oracle:thin:@" + server + ":" + port + ":" + database;
+                    } else if(jdbcDriver.contains("jtds")) {
+                        url = String.format("jdbc:jtds:sqlserver://%s:%s;DatabaseName=%s",
+                                server,
+                                port,
+                                database);
+                    } else {
+                        throw new ExceptionInInitializerError(new ArcSDEConnectionException("Exception in ArcSDEConnection using JDBC: don't know how to create database URL for driver " + jdbcDriver));
+                    }
+                    jdbcConnection = DriverManager.getConnection(url, username, password);
                     System.out.println("Connected to ArcSDE using JDBC");
                 }
                 catch (ClassNotFoundException x) {
@@ -99,7 +107,7 @@ public class ArcSDEConnection {
                 break;
             case arcsde:
                 try {
-    			    seConnection = new SeConnection(server, instance, database, username, password);
+    			    seConnection = new SeConnection(server, port, database, username, password);
     	    		System.out.println("Connected to ArcSDE using ARCSDE API");
 	    	    	seConnection.setConcurrency(SeConnection.SE_LOCK_POLICY);
 		        }

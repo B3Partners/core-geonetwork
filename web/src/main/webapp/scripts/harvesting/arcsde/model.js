@@ -107,6 +107,9 @@ var updateTemp =
 '      <username>{USERNAME}</username>'+
 '      <password>{PASSWORD}</password>'+
 '      <database>{DATABASE}</database>'+
+'      <jdbcDriver>{JDBC_DRIVER}</jdbcDriver>'+
+'      <schemaVersion>{SCHEMA_VERSION}</schemaVersion>'+
+'      <customQuery>{CUSTOM_QUERY}</customQuery>'+
 '      <icon>{ICON}</icon>'+
 '    </site>'+
 '    <options>'+

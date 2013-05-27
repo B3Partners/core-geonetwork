@@ -66,10 +66,48 @@
 					</div>
 					<div>
 						<input id="arcsde.radio-arcsde" name="arcsde.connectiontype" class="content" type="radio" value="arcsde"/>
-						<label for="arcsde.radio-arcsde">ARCSDE</label>						
+						<label for="arcsde.radio-arcsde">ArcObjects SDK</label>						
 					</div>
 				</td>
 			</tr>
+            
+            <tr id="jdbcOptions">
+				<td class="padded"><xsl:value-of select="/root/gui/harvesting/jdbcOptions"/></td>
+				<td class="padded" style="width: 300px">
+                    <table>
+                        <tr>
+                            <td class="padded" style="white-space: nowrap">
+                                <xsl:value-of select="/root/gui/harvesting/jdbcDriver"/>
+                            </td>
+                            <td class="padded">
+                                <select id="arcsde.jdbcDriver" name="jdbcDriver" class="content">
+                                    <option value="oracle.jdbc.OracleDriver">Oracle (thin)</option>
+                                    <option value="net.sourceforge.jtds.jdbc.Driver">MS SQL Server (jTDS)</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="padded" style="white-space: nowrap">
+                                <xsl:value-of select="/root/gui/harvesting/schemaVersion"/>
+                            </td>
+                            <td class="padded">
+                                <select id="arcsde.schemaVersion" name="schemaVersion" class="content">
+                                    <option value="9.x">9.x (GDB_USERMETADATA.XML)</option>
+                                    <option value="10.x">10.x (GDB_ITEMS.DOCUMENATION)</option>
+                                    <option value="custom"><xsl:value-of select="/root/gui/harvesting/customQueryValue"/></option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="padded" style="white-space: nowrap"><xsl:value-of select="/root/gui/harvesting/customQuery"/></td>
+                            <td class="padded" valign="top">
+                                <input id="arcsde.customQuery" class="content" type="text" value="" size="300"/><br/>
+                                <xsl:value-of select="/root/gui/harvesting/customQueryHelp"/>
+                            </td>
+                        </tr>
+                    </table>
+                </td>                
+            </tr>
 			
 			<tr>
 				<td class="padded" valign="bottom"><xsl:value-of select="/root/gui/harvesting/icon"/></td>
