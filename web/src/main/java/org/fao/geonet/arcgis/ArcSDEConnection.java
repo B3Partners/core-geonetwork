@@ -73,8 +73,8 @@ public class ArcSDEConnection {
                     String url;
                     if(jdbcDriver.contains("oracle")) {
                         url = "jdbc:oracle:thin:@" + server + ":" + port + ":" + database;
-                    } else if(jdbcDriver.contains("jtds")) {
-                        url = String.format("jdbc:jtds:sqlserver://%s:%s;DatabaseName=%s",
+                    } else if(jdbcDriver.contains("sqlserver")) {
+                        url = String.format("jdbc:sqlserver://%s:%s;databaseName=%s",
                                 server,
                                 port,
                                 database);

@@ -96,32 +96,13 @@ public class ArcSDEMetadataAdapter extends ArcSDEConnection {
         ResultSet resultSet = statement.executeQuery();
         while(resultSet.next()){
             String document = "";
-            // very simple type check:
-            if (resultSet.getMetaData().getColumnType(1) == Types.BLOB) {
-                Blob blob = resultSet.getBlob(1);
-                byte[] bdata = blob.getBytes(1, (int) blob.length());
-                document = new String(bdata);
 
-            } else if (resultSet.getMetaData().getColumnType(1) == Types.LONGVARBINARY) {            
+            if (resultSet.getMetaData().getColumnType(1) == Types.BLOB
+                    || resultSet.getMetaData().getColumnType(1) == Types.LONGVARBINARY) {
                 byte[] bdata = resultSet.getBytes(1);
                 document = new String(bdata);
-            } else if (resultSet.getMetaData().getColumnType(1) == Types.CLOB) {
-                document = resultSet.getString(1);
             } else {
-                throw new Exception("Trying to harvest from a column with an invalid datatype: " + resultSet.getMetaData().getColumnTypeName(1));
-                /*Reader reader = resultSet.getCharacterStream(colId);
-                BufferedReader bufReader = new BufferedReader(reader);
-
-                char[] charBuf = new char[65536];
-                StringBuffer stringBuf = new StringBuffer();
-
-                int readThisTime = bufReader.read(charBuf, 0, 65536);
-                while (readThisTime != -1) {
-                    stringBuf.append(charBuf, 0, readThisTime);
-                    readThisTime = bufReader.read(charBuf, 0, 65536);
-                }
-                
-                document = stringBuf.toString();*/
+                document = resultSet.getString(1);
             }
             results.add(document);
         }

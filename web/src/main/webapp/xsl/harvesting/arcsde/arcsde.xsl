@@ -82,7 +82,7 @@
                             <td class="padded">
                                 <select id="arcsde.jdbcDriver" name="jdbcDriver" class="content">
                                     <option value="oracle.jdbc.OracleDriver">Oracle (thin)</option>
-                                    <option value="net.sourceforge.jtds.jdbc.Driver">MS SQL Server (jTDS)</option>
+                                    <option value="com.microsoft.sqlserver.jdbc.SQLServerDriver">MS SQL Server</option>
                                 </select>
                             </td>
                         </tr>
