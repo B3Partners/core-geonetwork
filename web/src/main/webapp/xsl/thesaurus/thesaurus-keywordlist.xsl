@@ -11,7 +11,28 @@
 				<img align="right" src="{/root/gui/url}/images/del.gif" onclick="$('keywordSelectorFrame').style.display = 'none'"/><br/>
 				<xsl:if test="count(/root/response/summary/keywords/keyword)=0">0 <xsl:value-of select="/root/gui/strings/keyword"/>.</xsl:if>
 
-				<xsl:for-each select="/root/response/summary/keywords/keyword">
+                <xsl:variable name="keywords">
+                    <xsl:choose>
+                        <!-- XML is by default sorted using sortBy parameter 
+                          (relevance, rating, popularity or date). To sort keywords by
+                          the keyword itself re-sort the XML keyword list here.
+                          The sortByKeyword parameter is added to the portal.search.keywords
+                          service call in searchform_advanced.xsl
+                        -->
+                        <xsl:when test="/root/request/sortByKeyword = 'true'">
+                            <xsl:for-each select="/root/response/summary/keywords/keyword">
+                                <xsl:sort select="lower-case(@name)"/>
+                                <xsl:copy-of select="."/>
+                            </xsl:for-each>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:for-each select="/root/response/summary/keywords/keyword">
+                                <xsl:copy-of select="."/>
+                            </xsl:for-each>
+                        </xsl:otherwise>    
+                    </xsl:choose>                        
+                </xsl:variable>
+				<xsl:for-each select="$keywords/keyword">
 					<input type="checkbox" id="keyword{position()}" name="" value="" onclick="keywordCheck(this.value, this.checked);">
 						<xsl:attribute name="value">
 							<xsl:value-of select="@name"/>

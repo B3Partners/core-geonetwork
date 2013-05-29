@@ -78,7 +78,8 @@ public class UserQueryInput {
             Geonet.SearchResult.BUILD_SUMMARY,
             Geonet.SearchResult.REQUESTED_LANGUAGE,
             "region_simple", "attrset", "mode", 
-            "region", "from", "to", "hitsperpage" 
+            "region", "from", "to", "hitsperpage",
+            "sortByKeyword"
             );
 
     private String similarity;
