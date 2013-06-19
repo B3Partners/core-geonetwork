@@ -192,7 +192,7 @@ public class ArcSDEHarvester extends AbstractHarvester {
                 logger.info(String.format("ArcSDE harvest JDBC driver=%s, schema=%s, customQuery=%s", params.jdbcDriver, params.schemaVersion, params.customQuery));
             }
             ArcSDEMetadataAdapter adapter = new ArcSDEMetadataAdapter(connectionType, params.server, params.port, params.database, params.username, params.password, params.jdbcDriver, params.schemaVersion, params.customQuery);
-            List<String> metadataList = adapter.retrieveMetadata();
+            List<String[]> metadataList = adapter.retrieveMetadata();
             align(metadataList, rm);
             logger.info("ArcSDE harvest finished");
         }
@@ -207,7 +207,7 @@ public class ArcSDEHarvester extends AbstractHarvester {
         }
 	}
 
-	private void align(List<String> metadataList, ResourceManager rm) throws Exception {
+	private void align(List<String[]> metadataList, ResourceManager rm) throws Exception {
 		System.out.println("Start of alignment for : "+ params.name);
 		ArcSDEResult result = new ArcSDEResult();
 		Dbms dbms = (Dbms) rm.open(Geonet.Res.MAIN_DB);
@@ -228,8 +228,15 @@ public class ArcSDEHarvester extends AbstractHarvester {
 		List<String> idsForHarvestingResult = new ArrayList<String>();
 		//-----------------------------------------------------------------------
 		//--- insert/update metadata		
-		for(String metadata : metadataList) {
+        int count = 0;
+		for(String[] metadataInfo : metadataList) {
+            String metadata = metadataInfo[0];
+            String otherInfo = metadataInfo[1];
+            System.out.println(String.format("Processing record %d of %d, harvest info: %s",
+                    ++count, metadataList.size(), otherInfo != null && !"".equals(otherInfo) ? otherInfo : "-"));
+            
             if(metadata == null || metadata.trim().length() == 0) {
+                result.badFormat++;
                 continue;
             }
 			result.total++;
@@ -316,6 +323,7 @@ public class ArcSDEHarvester extends AbstractHarvester {
 		for(Element existingId : existingMetadata) {
 			String ex$ = existingId.getChildText("id");
 			if(!idsForHarvestingResult.contains(ex$)) {
+                System.out.println("Deleting old record from index not in harvesting result: " + ex$);
 				dataMan.deleteMetadataGroup(context, dbms, ex$);
 				result.removed++;
 			}

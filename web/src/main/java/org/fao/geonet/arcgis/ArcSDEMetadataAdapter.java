@@ -34,6 +34,7 @@ import com.esri.sde.sdk.client.SeException;
 import com.esri.sde.sdk.client.SeQuery;
 import com.esri.sde.sdk.client.SeRow;
 import com.esri.sde.sdk.client.SeSqlConstruct;
+import java.sql.SQLException;
 
 import java.sql.Types;
 import org.fao.geonet.kernel.harvest.harvester.arcsde.ArcSDEConnectionType;
@@ -62,9 +63,9 @@ public class ArcSDEMetadataAdapter extends ArcSDEConnection {
     /**
      * Retrieves all metadata records found in the ArcSDE database.
      */
-	public List<String> retrieveMetadata() throws Exception {
+	public List<String[]> retrieveMetadata() throws Exception {
 		System.out.println("start retrieve metadata");
-		List<String> results = new ArrayList<String>();
+		List<String[]> results = new ArrayList<String[]>();
         switch(connectionType) {
             case jdbc:
                 results = retrieveMetadataJDBC() ;
@@ -78,14 +79,14 @@ public class ArcSDEMetadataAdapter extends ArcSDEConnection {
         return results;
     }
 
-    private List<String> retrieveMetadataJDBC() throws Exception {
-        List<String> results = new ArrayList<String>();
+    private List<String[]> retrieveMetadataJDBC() throws Exception {
+        List<String[]> results = new ArrayList<String[]>();
         
         String query;
         if("9.x".equals(schemaVersion)) {
-            query = "select xml from gdb_usermetadata";
+            query = "select xml as metadata, id, name from gdb_usermetadata";
         } else if("10.x".equals(schemaVersion)) {
-            query = "select documentation from gdb_items";
+            query = "select documentation as metadata, uuid, path, physicalname from gdb_items";
         } else if("custom".equals(schemaVersion)) {
             query = customQuery;
         } else {
@@ -97,6 +98,13 @@ public class ArcSDEMetadataAdapter extends ArcSDEConnection {
         while(resultSet.next()){
             String document = "";
 
+            int metadataIndex;
+            try {
+                metadataIndex = resultSet.findColumn("metadata");
+            } catch(SQLException e) {
+                // No column named metadata, use first column
+                metadataIndex = 1;
+            }
             if (resultSet.getMetaData().getColumnType(1) == Types.BLOB
                     || resultSet.getMetaData().getColumnType(1) == Types.LONGVARBINARY) {
                 byte[] bdata = resultSet.getBytes(1);
@@ -104,14 +112,35 @@ public class ArcSDEMetadataAdapter extends ArcSDEConnection {
             } else {
                 document = resultSet.getString(1);
             }
-            results.add(document);
+            String otherInfo = "length " + (document == null ? 0 : document.length());
+            if(document != null) {
+                int sampleLength = 60;
+                otherInfo = otherInfo + ", sample: \"" + document.substring(0, sampleLength) 
+                        + (document.length() > sampleLength ? "..." : "") + "\"";
+            }
+            for(int i = 1; i < resultSet.getMetaData().getColumnCount()+1; i++) {
+                if(i != metadataIndex) {
+                    try {
+                        String s = otherInfo.equals("") ? "" : ", ";
+                        String n = resultSet.getMetaData().getColumnName(i);
+                        if(n == null || "".equals(n)) {
+                            n = "column " + i;
+                        }
+                        s += n + "=" + resultSet.getString(i);
+                        otherInfo += s;
+                    } catch(SQLException e) {
+                    }
+                }
+            }
+            
+            results.add(new String[] {document, otherInfo});
         }
         System.out.println("ARCSDE Harvester using JDBC found # " + results.size() + " results");
         return results;
     }
     
-    private List<String> retrieveMetadataArcSDE() throws Exception {
-        List<String> results = new ArrayList<String>();            
+    private List<String[]> retrieveMetadataArcSDE() throws Exception {
+        List<String[]> results = new ArrayList<String[]>();
 		try {	
 			// query table containing XML metadata
 			SeSqlConstruct sqlConstruct = new SeSqlConstruct();
@@ -134,7 +163,7 @@ public class ArcSDEMetadataAdapter extends ArcSDEConnection {
 					String document = new String(buff);
 					if(document.contains(ISO_METADATA_IDENTIFIER)) {
 						System.out.println("ISO metadata found");
-						results.add(document);
+						results.add(new String[]{document,""});
 					}
 				}
 				else {

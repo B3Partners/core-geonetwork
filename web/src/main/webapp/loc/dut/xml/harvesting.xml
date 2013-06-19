@@ -128,9 +128,11 @@
     <customQuery>Eigen SQL query</customQuery>
     <customQueryValue>Gebruik eigen query</customQueryValue>
     <customQueryHelp>SQL query voor het ophalen van metadata in plaats van de standaard
-        queries voor de SDE schema versie. De standaard queries zijn: 'select xml 
-        from gdb_usermetadata' (SDE 9.x) en 'select documentation from 
-        gdb_items' (SDE 10.x). Pas deze queries aan voor zover nodig.
+        queries voor de SDE schema versie. De standaard queries zijn: 'select xml as metadata, 
+        id, name from gdb_usermetadata' (SDE 9.x) en 'select documentation as metadata, uuid,
+        path, physicalname from gdb_items' (SDE 10.x). Pas deze queries aan voor zover nodig.
+        Een kolom genaamd "metadata" (of de eerste kolom) met de XML is verplicht, de overige
+        kolommen worden gelogd voor exta info.
     </customQueryHelp>    
     	
 	<createRemoteCategory>Set categories if exist locally</createRemoteCategory>
