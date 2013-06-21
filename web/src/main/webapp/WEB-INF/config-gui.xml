@@ -63,9 +63,9 @@
         params      OpenLayers params hash as expected in new OpenLayers.Layer.WMS(name, url, params, options)
         options     OpenLayers options hash as expected in new OpenLayers.Layer.WMS(name, url, params, options)
  -->
-  <mapSearch options="{projection: 'EPSG:28992', units: 'm', maxExtent: new OpenLayers.Bounds(109635,436517,173887,481235), restrictedExtent: null, resolutions: [3440.64,1720.32,860.16,430.08,215.04,107.52,53.76,26.88,13.44,6.72,3.36,1.68,0.84,0.42,0.21,0.105,0.0525]}">
+  <mapSearch options="{projection: 'EPSG:28992', units: 'm', maxExtent: new OpenLayers.Bounds(13558,306867,278090,618986), restrictedExtent: null, resolutions: [3440.64,1720.32,860.16,430.08,215.04,107.52,53.76,26.88,13.44,6.72,3.36,1.68,0.84,0.42,0.21]}">
   <layers>
-    <layer server="http://geoservices.provincie-utrecht.nl/arcgis/services/c01-3-3_admin/MapServer/WMSServer" tocName="Provinciegrens" params="{layers: '1', format: 'image/jpeg'}" options="{isBaseLayer: true}" />
+    <layer server="http://geodata.nationaalgeoregister.nl/bestuurlijkegrenzen/wms" tocName="Provinciegrenzen" params="{layers: 'provincies_2012', format: 'image/png'}" options="{isBaseLayer: true}" />
   </layers>
  </mapSearch>
  
@@ -84,8 +84,9 @@
  -->
   <mapViewer options="{projection: 'EPSG:28992', units: 'm', maxExtent: new OpenLayers.Bounds(12000,304000,280000,620000), restrictedExtent: null, resolutions: [3440.64,1720.32,860.16,430.08,215.04,107.52,53.76,26.88,13.44,6.72,3.36,1.68,0.84,0.42,0.21,0.105,0.0525]}">
   <layers>
-    <layer server="http://geoservices.provincie-utrecht.nl/arcgis/services/c01-3-3_admin/MapServer/WMSServer" tocName="Provinciegrenzen" params="{layers: '1', format: 'image/png', transparent: 'true'}" options="{isBaseLayer: false}" />
-    <layer server="http://geoservices.provincie-utrecht.nl/arcgis/services/c01-3-3_admin/MapServer/WMSServer" tocName="Gemeentegrenzen" params="{layers: '0', format: 'image/png', transparent: 'true'}" options="{isBaseLayer: true}" />
+    <layer server="http://openbasiskaart.nl/mapcache/" tocName="Openbasiskaart" params="{layers: 'osm', format: 'image/png'}" options="{isBaseLayer: true}" />
+    <layer server="http://geodata.nationaalgeoregister.nl/bestuurlijkegrenzen/wms" tocName="Provinciegrenzen" params="{layers: 'provincies_2012', format: 'image/png'}" options="{isBaseLayer: true}" />
+    <layer server="http://geodata.nationaalgeoregister.nl/bestuurlijkegrenzen/wms" tocName="Gemeentegrenzen" params="{layers: 'gemeenten_2012', format: 'image/png'}" options="{isBaseLayer: true}" />
   </layers>
   <scales values="[500, 250, 100, 50, 10, 5, 1]" />
   <!--scales values="[]" /-->
@@ -93,8 +94,7 @@
     <crs code="EPSG:28992" default="1" name="Rijksdriehoekstelsel" def="+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +towgs84=565.237,50.0087,465.658,-0.406857,0.350733,-1.87035,4.0812 +units=m +no_defs"/>
   </proj>  
   <servers>
-    <server name="Administratieve grenzen" url="http://geoservices.provincie-utrecht.nl/arcgis/services/c01-3-3_admin/MapServer/WMSServer"/>
-    <server name="Luchtfoto" url="http://geoservices.provincie-utrecht.nl/arcgis/services/c01-3-3_lufo/MapServer/WMSServer"/>
+    <server name="Bestuurlijke grenzen" url="http://geodata.nationaalgeoregister.nl/bestuurlijkegrenzen/wms"/>
   </servers>
  </mapViewer>
  
