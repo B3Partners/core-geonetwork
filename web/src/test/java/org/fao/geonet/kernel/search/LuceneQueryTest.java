@@ -1034,7 +1034,7 @@ public class LuceneQueryTest extends TestCase {
 		// build lucene query
 		Query query = new LuceneQueryBuilder(_tokenizedFieldSet, _numericFieldSet, _analyzer, null).build(lQI);
 		// verify query
-		assertEquals("unexpected Lucene query", "+_changeDate:[12-05-1989 TO *] +_isTemplate:n", query.toString());
+		assertEquals("unexpected Lucene query", "+revisionDate:[12-05-1989 TO *] +_isTemplate:n", query.toString());
 	}
 
 	/**
@@ -1052,7 +1052,7 @@ public class LuceneQueryTest extends TestCase {
 		// build lucene query
 		Query query = new LuceneQueryBuilder(_tokenizedFieldSet, _numericFieldSet, _analyzer, null).build(lQI);
 		// verify query
-		assertEquals("unexpected Lucene query", "+_changeDate:[* TO 12-05-1989T23:59:59] +_isTemplate:n", query.toString());
+		assertEquals("unexpected Lucene query", "+revisionDate:[* TO 12-05-1989T23:59:59] +_isTemplate:n", query.toString());
 	}
 
 
@@ -1074,7 +1074,7 @@ public class LuceneQueryTest extends TestCase {
 		// build lucene query
 		Query query = new LuceneQueryBuilder(_tokenizedFieldSet, _numericFieldSet, _analyzer, null).build(lQI);
 		// verify query
-		assertEquals("unexpected Lucene query", "+_changeDate:[11-05-1989 TO 12-05-1989T23:59:59] +_isTemplate:n", query.toString());
+		assertEquals("unexpected Lucene query", "+revisionDate:[11-05-1989 TO 12-05-1989T23:59:59] +_isTemplate:n", query.toString());
 	}
 
 	/**

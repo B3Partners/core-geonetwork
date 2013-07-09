@@ -191,7 +191,7 @@ public class UserQueryInput {
      * TODO : use enum instead ? 
      */
     private static final List<String> RANGE_FIELDS = Arrays.asList(
-            LuceneIndexField.CHANGE_DATE, 
+            LuceneIndexField.REVISION_DATE, 
             LuceneIndexField.REVISION_DATE,
             LuceneIndexField.PUBLICATION_DATE, 
             LuceneIndexField.CREATE_DATE,
