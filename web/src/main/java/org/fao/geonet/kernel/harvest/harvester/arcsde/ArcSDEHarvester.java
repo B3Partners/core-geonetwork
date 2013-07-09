@@ -159,10 +159,8 @@ public class ArcSDEHarvester extends AbstractHarvester {
 			add(res, "total",          result.total);
 			add(res, "added",          result.added);
 			add(res, "updated",        result.updated);
-			add(res, "unchanged",      result.unchanged);
 			add(res, "unknownSchema",  result.unknownSchema);
 			add(res, "removed",        result.removed);
-			add(res, "unretrievable",  result.unretrievable);
 			add(res, "badFormat",      result.badFormat);
 			add(res, "doesNotValidate",result.doesNotValidate);
 		}
@@ -209,7 +207,7 @@ public class ArcSDEHarvester extends AbstractHarvester {
 
 	private void align(List<String[]> metadataList, ResourceManager rm) throws Exception {
 		System.out.println("Start of alignment for : "+ params.name);
-		ArcSDEResult result = new ArcSDEResult();
+		this.result = new ArcSDEResult();
 		Dbms dbms = (Dbms) rm.open(Geonet.Res.MAIN_DB);
         
 		boolean transformIt = false;
@@ -475,10 +473,8 @@ public class ArcSDEHarvester extends AbstractHarvester {
 		public int total;
 		public int added;
 		public int updated;
-		public int unchanged;
 		public int removed;
 		public int unknownSchema;
-		public int unretrievable;
 		public int badFormat;
 		public int doesNotValidate;		
 	}
