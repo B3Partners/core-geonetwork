@@ -630,18 +630,6 @@
 									<xsl:value-of select="/root/gui/strings/interactiveMap"/>
 								</button>
 
-                                <!-- PoU: Build link to Webkaart: -->
-                                <xsl:variable name="test-part">
-                                    <!-- Add 'test' to the url if running in test environment to use the test viewer -->
-                                    <xsl:if test="contains(/root/gui/env/server/host, 'test')">test</xsl:if>
-                                </xsl:variable>
-                                <xsl:variable name="baseviewerurl">http://webkaart<xsl:value-of select="$test-part"/>.provincie-utrecht.nl/index.do</xsl:variable>
-                                <xsl:variable name="wms" select="$metadata/link[@type='application/vnd.ogc.wms_xml']/@href"/>
-                                <xsl:variable name="layers" select="$metadata/link[@type='application/vnd.ogc.wms_xml']/@name"/>
-                                <xsl:variable name="viewerurl" select="concat($baseviewerurl, '?wmsurl=', encode-for-uri($wms), '&amp;layers=', encode-for-uri($layers))"/>                                    
-                                <br/>
-                                <button class="content" onclick="window.open('{$viewerurl}')" title="Toon in Webkaart{$test-part}">Toon in Webkaart<xsl:value-of select="$test-part"/></button>
-                                    
 								<!-- View WMS in Google Earth map button -->
 								<xsl:if test="$metadata/link[@type='googleearth']">
 									&#160;
