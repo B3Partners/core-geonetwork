@@ -2495,7 +2495,7 @@
 
 
 		<xsl:if test="$edit=false()">
-			<xsl:if test="count(gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource/gmd:protocol/gco:CharacterString[contains(string(.),'download')])>1 and
+			<xsl:if test="false() and count(gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource/gmd:protocol/gco:CharacterString[contains(string(.),'download')])>1 and
 							/root/*[name(.)='gmd:MD_Metadata' or @gco:isoType='gmd:MD_Metadata']/geonet:info/download='true'">
 				<xsl:call-template name="complexElementGui">
 					<xsl:with-param name="title" select="/root/gui/strings/downloadSummary"/>
