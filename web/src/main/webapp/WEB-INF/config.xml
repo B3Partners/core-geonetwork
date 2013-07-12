@@ -187,7 +187,7 @@
 			<config>
 				<context>java:/comp/env</context>
 				<resourceName>jdbc/geonetwork</resourceName>
-                <url>jdbc:oracle:thin:@somehost:1521:sid</url>
+                <url>jdbc:sqlserver://host/db</url>
 			</config>
 		</resource>
 
