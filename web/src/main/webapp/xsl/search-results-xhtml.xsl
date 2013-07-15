@@ -570,16 +570,17 @@
 					</xsl:if>
 		
 					<!-- download data button -->
+                    <!-- pzh: never show, URLs not meaningful -->
 					<xsl:choose>
 						<!-- add download button if have download privilege and downloads are available -->
-						<xsl:when test="$metadata/geonet:info/download='true' and count($metadata/link[@type='download'])>0">
+						<xsl:when test="false() and $metadata/geonet:info/download='true' and count($metadata/link[@type='download'])>0">
 							<xsl:call-template name="download-button">
 								<xsl:with-param name="metadata" select="$metadata"/>
 								<xsl:with-param name="remote" select="$remote"/>
 							</xsl:call-template>
 						</xsl:when>
 						<!-- or when the metadata has associated data url's -->
-						<xsl:when test="count($metadata/link[@type='dataurl'])>0">
+						<xsl:when test="false() and count($metadata/link[@type='dataurl'])>0">
 							<xsl:call-template name="download-button">
 								<xsl:with-param name="metadata" select="$metadata"/>
 								<xsl:with-param name="remote" select="$remote"/>
@@ -594,7 +595,7 @@
 						</xsl:when>
 						
 						<!-- or notify that downloads would be available if logged in when downloads available to GUEST -->
-						<xsl:when test="$metadata/geonet:info/guestdownload='true' and 
+						<xsl:when test="false() and $metadata/geonet:info/guestdownload='true' and 
 													/root/gui/session/userId='' and
 													count($metadata/link[@type='download'])>0">
 							&#160;
