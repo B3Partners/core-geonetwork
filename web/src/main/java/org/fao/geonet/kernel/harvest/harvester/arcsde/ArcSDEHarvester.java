@@ -22,6 +22,7 @@
 //==============================================================================
 package org.fao.geonet.kernel.harvest.harvester.arcsde;
 
+import java.io.ByteArrayInputStream;
 import jeeves.exceptions.BadInputEx;
 import jeeves.interfaces.Logger;
 import jeeves.resources.dbms.Dbms;
@@ -190,7 +191,7 @@ public class ArcSDEHarvester extends AbstractHarvester {
                 logger.info(String.format("ArcSDE harvest JDBC driver=%s, schema=%s, customQuery=%s", params.jdbcDriver, params.schemaVersion, params.customQuery));
             }
             ArcSDEMetadataAdapter adapter = new ArcSDEMetadataAdapter(connectionType, params.server, params.port, params.database, params.username, params.password, params.jdbcDriver, params.schemaVersion, params.customQuery);
-            List<String[]> metadataList = adapter.retrieveMetadata();
+            List<Object[]> metadataList = adapter.retrieveMetadata();
             align(metadataList, rm);
             logger.info("ArcSDE harvest finished");
         }
@@ -205,7 +206,7 @@ public class ArcSDEHarvester extends AbstractHarvester {
         }
 	}
 
-	private void align(List<String[]> metadataList, ResourceManager rm) throws Exception {
+	private void align(List<Object[]> metadataList, ResourceManager rm) throws Exception {
 		System.out.println("Start of alignment for : "+ params.name);
 		this.result = new ArcSDEResult();
 		Dbms dbms = (Dbms) rm.open(Geonet.Res.MAIN_DB);
@@ -227,19 +228,19 @@ public class ArcSDEHarvester extends AbstractHarvester {
 		//-----------------------------------------------------------------------
 		//--- insert/update metadata		
         int count = 0;
-		for(String[] metadataInfo : metadataList) {
-            String metadata = metadataInfo[0];
-            String otherInfo = metadataInfo[1];
+		for(Object[] metadataInfo : metadataList) {
+            byte[] metadata = (byte[])metadataInfo[0];
+            String otherInfo = (String)metadataInfo[1];
             System.out.println(String.format("Processing record %d of %d, harvest info: %s",
                     ++count, metadataList.size(), otherInfo != null && !"".equals(otherInfo) ? otherInfo : "-"));
             
-            if(metadata == null || metadata.trim().length() == 0) {
+            if(metadata == null || metadata.length == 0) {
                 result.badFormat++;
                 continue;
             }
 			result.total++;
 			// create JDOM element from String-XML
-			Element metadataElement = Xml.loadString(metadata, false);
+			Element metadataElement = Xml.loadStream(new ByteArrayInputStream(metadata));
             
             // If it exists, unwrap a MD_Metadata element if contained within a
             // <metadata> ESRI document 

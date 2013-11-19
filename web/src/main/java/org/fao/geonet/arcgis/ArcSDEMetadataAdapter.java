@@ -63,9 +63,9 @@ public class ArcSDEMetadataAdapter extends ArcSDEConnection {
     /**
      * Retrieves all metadata records found in the ArcSDE database.
      */
-	public List<String[]> retrieveMetadata() throws Exception {
+	public List<Object[]> retrieveMetadata() throws Exception {
 		System.out.println("start retrieve metadata");
-		List<String[]> results = new ArrayList<String[]>();
+		List<Object[]> results = new ArrayList<Object[]>();
         switch(connectionType) {
             case jdbc:
                 results = retrieveMetadataJDBC() ;
@@ -79,8 +79,8 @@ public class ArcSDEMetadataAdapter extends ArcSDEConnection {
         return results;
     }
 
-    private List<String[]> retrieveMetadataJDBC() throws Exception {
-        List<String[]> results = new ArrayList<String[]>();
+    private List<Object[]> retrieveMetadataJDBC() throws Exception {
+        List<Object[]> results = new ArrayList<Object[]>();
         
         String query;
         if("9.x".equals(schemaVersion)) {
@@ -96,7 +96,7 @@ public class ArcSDEMetadataAdapter extends ArcSDEConnection {
         PreparedStatement statement = jdbcConnection.prepareStatement(query);
         ResultSet resultSet = statement.executeQuery();
         while(resultSet.next()){
-            String document = "";
+            byte[] document = null;
 
             int metadataIndex;
             try {
@@ -105,18 +105,19 @@ public class ArcSDEMetadataAdapter extends ArcSDEConnection {
                 // No column named metadata, use first column
                 metadataIndex = 1;
             }
-            if (resultSet.getMetaData().getColumnType(1) == Types.BLOB
-                    || resultSet.getMetaData().getColumnType(1) == Types.LONGVARBINARY) {
-                byte[] bdata = resultSet.getBytes(1);
-                document = new String(bdata);
+            if (resultSet.getMetaData().getColumnType(metadataIndex) == Types.BLOB
+                    || resultSet.getMetaData().getColumnType(metadataIndex) == Types.LONGVARBINARY) {
+                document = resultSet.getBytes(metadataIndex);
             } else {
-                document = resultSet.getString(1);
+                document = resultSet.getString(metadataIndex).getBytes("UTF-8");
             }
-            String otherInfo = "length " + (document == null ? 0 : document.length());
+            String otherInfo = "length " + (document == null ? 0 : document.length);
             if(document != null) {
                 int sampleLength = 60;
-                otherInfo = otherInfo + ", sample: \"" + document.substring(0, sampleLength) 
-                        + (document.length() > sampleLength ? "..." : "") + "\"";
+                byte[] sampleBytes = new byte[Math.min(sampleLength, document.length)];
+                System.arraycopy(document, 0, sampleBytes, 0, sampleBytes.length);
+                otherInfo = otherInfo + ", sample: \"" + new String(sampleBytes, "US-ASCII") 
+                        + (document.length > sampleLength ? "..." : "") + "\"";
             }
             for(int i = 1; i < resultSet.getMetaData().getColumnCount()+1; i++) {
                 if(i != metadataIndex) {
@@ -133,14 +134,14 @@ public class ArcSDEMetadataAdapter extends ArcSDEConnection {
                 }
             }
             
-            results.add(new String[] {document, otherInfo});
+            results.add(new Object[] {document, otherInfo});
         }
         System.out.println("ARCSDE Harvester using JDBC found # " + results.size() + " results");
         return results;
     }
     
-    private List<String[]> retrieveMetadataArcSDE() throws Exception {
-        List<String[]> results = new ArrayList<String[]>();
+    private List<Object[]> retrieveMetadataArcSDE() throws Exception {
+        List<Object[]> results = new ArrayList<Object[]>();
 		try {	
 			// query table containing XML metadata
 			SeSqlConstruct sqlConstruct = new SeSqlConstruct();
@@ -162,8 +163,7 @@ public class ArcSDEMetadataAdapter extends ArcSDEConnection {
 					bytes.read(buff);
 					String document = new String(buff);
 					if(document.contains(ISO_METADATA_IDENTIFIER)) {
-						System.out.println("ISO metadata found");
-						results.add(new String[]{document,""});
+						results.add(new Object[]{buff,""});
 					}
 				}
 				else {
