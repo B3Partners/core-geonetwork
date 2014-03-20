@@ -240,7 +240,15 @@ public class ArcSDEHarvester extends AbstractHarvester {
             }
 			result.total++;
 			// create JDOM element from String-XML
-			Element metadataElement = Xml.loadStream(new ByteArrayInputStream(metadata));
+            Element metadataElement;
+            try {
+                metadataElement = Xml.loadStream(new ByteArrayInputStream(metadata));
+            } catch(Exception e) {
+                System.out.println("Error parsing XML document");                
+                e.printStackTrace();
+                result.badFormat++;
+                continue;
+            }
             
             // If it exists, unwrap a MD_Metadata element if contained within a
             // <metadata> ESRI document 

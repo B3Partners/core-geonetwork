@@ -93,7 +93,7 @@
                             <td class="padded">
                                 <select id="arcsde.schemaVersion" name="schemaVersion" class="content">
                                     <option value="9.x">9.x (GDB_USERMETADATA.XML)</option>
-                                    <option value="10.x">10.x (GDB_ITEMS.DOCUMENATION)</option>
+                                    <option value="10.x">10.x (GDB_ITEMS_VW.DOCUMENATION)</option>
                                     <option value="custom"><xsl:value-of select="/root/gui/harvesting/customQueryValue"/></option>
                                 </select>
                             </td>

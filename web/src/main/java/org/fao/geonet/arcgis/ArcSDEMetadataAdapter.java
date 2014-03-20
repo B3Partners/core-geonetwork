@@ -86,7 +86,7 @@ public class ArcSDEMetadataAdapter extends ArcSDEConnection {
         if("9.x".equals(schemaVersion)) {
             query = "select xml as metadata, id, name from gdb_usermetadata";
         } else if("10.x".equals(schemaVersion)) {
-            query = "select documentation as metadata, uuid, path, physicalname from gdb_items";
+            query = "select documentation as metadata, uuid, path, physicalname from gdb_items_vw";
         } else if("custom".equals(schemaVersion)) {
             query = customQuery;
         } else {
@@ -109,7 +109,8 @@ public class ArcSDEMetadataAdapter extends ArcSDEConnection {
                     || resultSet.getMetaData().getColumnType(metadataIndex) == Types.LONGVARBINARY) {
                 document = resultSet.getBytes(metadataIndex);
             } else {
-                document = resultSet.getString(metadataIndex).getBytes("UTF-8");
+                String s = resultSet.getString(metadataIndex);
+                document = s == null || s.trim().length() == 0 ? null : s.getBytes("UTF-8");
             }
             String otherInfo = "length " + (document == null ? 0 : document.length);
             if(document != null) {

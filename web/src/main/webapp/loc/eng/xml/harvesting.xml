@@ -130,7 +130,7 @@
     <customQueryHelp>SQL query for retrieving metadata instead of the standard 
         query for the SDE schema version. The standard queries are: 'select xml
         as metadata, id, name from gdb_usermetadata' (SDE 9.x) and 'select 
-        documentation as metadata, uuid, path, physicalname from gdb_items' 
+        documentation as metadata, uuid, path, physicalname from gdb_items_vw' 
         (SDE 10.x). Customize these as needed. A column named "metadata" (or 
         the first column) containing the XML is required, other columns logged
         for extra info.
